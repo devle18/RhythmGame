@@ -10,8 +10,8 @@ public class AllPerfectUI : MonoBehaviour
     [Tooltip("Kéo AllPerfectManager vào đây")]
     [SerializeField] private AllPerfectManager _allPerfectManager;
 
-    [Tooltip("Kéo cục Text chữ ALL PERFECT (đã bị ẩn) vào đây")]
-    [SerializeField] private GameObject _allPerfectTextObject;
+    [Tooltip("Kéo cục Image chữ ALL PERFECT (đã bị ẩn) vào đây")]
+    [SerializeField] private GameObject _allPerfectDisplayObject;
 
     private void OnEnable()
     {
@@ -31,10 +31,10 @@ public class AllPerfectUI : MonoBehaviour
 
     private void Start()
     {
-        // Khởi đầu thì tắt chữ đi
-        if (_allPerfectTextObject != null)
+        // Khởi đầu thì tắt hình đi
+        if (_allPerfectDisplayObject != null)
         {
-            _allPerfectTextObject.SetActive(false);
+            _allPerfectDisplayObject.SetActive(false);
         }
     }
 
@@ -43,10 +43,10 @@ public class AllPerfectUI : MonoBehaviour
     /// </summary>
     private void ShowAllPerfectText()
     {
-        if (_allPerfectTextObject != null)
+        if (_allPerfectDisplayObject != null)
         {
-            _allPerfectTextObject.SetActive(true);
-            Debug.Log("<color=yellow>[AllPerfectUI]</color> Đã bật chữ ALL PERFECT lên màn hình!");
+            _allPerfectDisplayObject.SetActive(true);
+            Debug.Log("<color=yellow>[AllPerfectUI]</color> Đã bật hỉnh ảnh ALL PERFECT lên màn hình!");
             
             // Sau này bạn Nghĩa có thể gọi Animator hoặc Play Sound ở ngay dòng này:
             // GetComponent<Animator>().Play("AllPerfectPopUp");
