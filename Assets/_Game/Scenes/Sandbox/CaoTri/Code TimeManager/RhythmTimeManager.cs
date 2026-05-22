@@ -14,7 +14,7 @@ public class RhythmTimeManager : MonoBehaviour
 	}
 
 	// ==========================================================
-	// BPM
+	// SONG SETTINGS
 	// ==========================================================
 
 	[Header("Song Settings")]
@@ -22,56 +22,51 @@ public class RhythmTimeManager : MonoBehaviour
 	[SerializeField]
 	private float bpm = 120f;
 
-	// ==========================================================
-	// Offset
-	// ==========================================================
-
-	[Header("Offset")]
-
 	[SerializeField]
 	private float userOffsetMs = 0f;
+
+	// ==========================================================
+	// DEBUG
+	// ==========================================================
+
+	[Header("Debug")]
+
+	[SerializeField]
+	private bool enableDebugLog = true;
 
 	// ==========================================================
 	// DSP Timing
 	// ==========================================================
 
-	// DSP song start time
 	private double dspSongStartTime;
 
-	// DSP pause time
 	private double pauseDSPTime;
 
-	// Detect pause/resume
 	private bool wasPlaying;
 
 	// ==========================================================
 	// Runtime Values
 	// ==========================================================
 
-	// Current song time in seconds
 	public double SongPositionSeconds
 	{
 		get;
 		private set;
 	}
 
-	// Beat duration
 	public double SecondsPerBeat =>
 		60.0 / bpm;
 
-	// Current song position in beats
 	public double SongPositionInBeats =>
 		SongPositionSeconds /
 		SecondsPerBeat;
 
-	// Song progress 0 -> 1
 	public double SongProgress =>
 		SongPositionSeconds /
 		AudioManager.Instance
 			.GetMusicSource()
 			.clip.length;
 
-	// Song finished
 	public bool IsSongFinished =>
 		SongProgress >= 1.0;
 
@@ -81,7 +76,7 @@ public class RhythmTimeManager : MonoBehaviour
 
 	private void Awake()
 	{
-		// Singleton setup
+		// Singleton
 		if (Instance != null && Instance != this)
 		{
 			Destroy(gameObject);
@@ -94,13 +89,25 @@ public class RhythmTimeManager : MonoBehaviour
 		DontDestroyOnLoad(gameObject);
 	}
 
+	private void Start()
+	{
+		// ==========================================================
+		// AUTO START SONG
+		// ==========================================================
+
+		StartSong();
+	}
+
 	private void Update()
 	{
 		// ==========================================================
 		// ESC = Pause / Resume
 		// ==========================================================
 
-		if (Keyboard.current.escapeKey.wasPressedThisFrame)
+		if (
+			Keyboard.current.escapeKey
+				.wasPressedThisFrame
+		)
 		{
 			AudioSource source =
 				AudioManager.Instance
@@ -110,13 +117,19 @@ public class RhythmTimeManager : MonoBehaviour
 			{
 				PauseGame();
 
-				Debug.Log("PAUSE");
+				if (enableDebugLog)
+				{
+					Debug.Log("PAUSE");
+				}
 			}
 			else
 			{
 				ResumeGame();
 
-				Debug.Log("RESUME");
+				if (enableDebugLog)
+				{
+					Debug.Log("RESUME");
+				}
 			}
 		}
 
@@ -143,21 +156,30 @@ public class RhythmTimeManager : MonoBehaviour
 				AudioSettings.dspTime
 				- dspSongStartTime
 			)
-			+ (userOffsetMs / 1000.0);
+			+ (
+				userOffsetMs / 1000.0
+			);
 
 		// ==========================================================
 		// DEBUG
 		// ==========================================================
 
-		Debug.Log(
-			"Time: "
-			+ SongPositionSeconds.ToString("F2")
-			+ " | Beat: "
-			+ SongPositionInBeats.ToString("F2")
-			+ " | Progress: "
-			+ (SongProgress * 100f).ToString("F0")
-			+ "%"
-		);
+		if (enableDebugLog)
+		{
+			Debug.Log(
+				"Time: "
+				+ SongPositionSeconds
+					.ToString("F2")
+				+ " | Beat: "
+				+ SongPositionInBeats
+					.ToString("F2")
+				+ " | Progress: "
+				+ (
+					SongProgress * 100f
+				).ToString("F0")
+				+ "%"
+			);
+		}
 
 		// ==========================================================
 		// SONG FINISHED
@@ -165,9 +187,12 @@ public class RhythmTimeManager : MonoBehaviour
 
 		if (IsSongFinished)
 		{
-			Debug.Log(
-				"SONG FINISHED"
-			);
+			if (enableDebugLog)
+			{
+				Debug.Log(
+					"SONG FINISHED"
+				);
+			}
 		}
 	}
 
@@ -184,7 +209,10 @@ public class RhythmTimeManager : MonoBehaviour
 
 		wasPlaying = true;
 
-		Debug.Log("SONG START");
+		if (enableDebugLog)
+		{
+			Debug.Log("SONG START");
+		}
 	}
 
 	// ==========================================================
@@ -195,9 +223,12 @@ public class RhythmTimeManager : MonoBehaviour
 	{
 		bpm = newBpm;
 
-		Debug.Log(
-			"NEW BPM: " + bpm
-		);
+		if (enableDebugLog)
+		{
+			Debug.Log(
+				"NEW BPM: " + bpm
+			);
+		}
 	}
 
 	// ==========================================================
@@ -222,9 +253,12 @@ public class RhythmTimeManager : MonoBehaviour
 			pauseDSPTime =
 				AudioSettings.dspTime;
 
-			Debug.Log(
-				"DSP PAUSE DETECTED"
-			);
+			if (enableDebugLog)
+			{
+				Debug.Log(
+					"DSP PAUSE DETECTED"
+				);
+			}
 		}
 
 		// ==========================================================
@@ -241,9 +275,12 @@ public class RhythmTimeManager : MonoBehaviour
 			dspSongStartTime +=
 				pausedDuration;
 
-			Debug.Log(
-				"DSP RESYNC COMPLETE"
-			);
+			if (enableDebugLog)
+			{
+				Debug.Log(
+					"DSP RESYNC COMPLETE"
+				);
+			}
 		}
 
 		wasPlaying = isPlayingNow;
@@ -281,10 +318,13 @@ public class RhythmTimeManager : MonoBehaviour
 	{
 		userOffsetMs = offsetMs;
 
-		Debug.Log(
-			"OFFSET: "
-			+ userOffsetMs
-			+ " ms"
-		);
+		if (enableDebugLog)
+		{
+			Debug.Log(
+				"OFFSET: "
+				+ userOffsetMs
+				+ " ms"
+			);
+		}
 	}
 }
